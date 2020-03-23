@@ -19,7 +19,7 @@
 
 package com.puppycrawl.tools.checkstyle.api;
 
-import com.puppycrawl.tools.checkstyle.grammar.javadoc.JavadocParser;
+ import com.puppycrawl.tools.checkstyle.grammar.javadoc.JavadocParser;
 
 /**
  * Contains the constants for all the tokens contained in the Abstract

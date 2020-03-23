@@ -126,6 +126,105 @@ import com.puppycrawl.tools.checkstyle.utils.CommonUtil;
  *   .filter((s) -&gt; s.startsWith(&quot;c&quot;)) //violation
  *   .forEach(System.out::println);
  * </pre>
+ * 
+ * <pre>
+ *   
+ *   return (x);                              // parens around identifier
+ *   return (x + 1);                          // parens around return value
+ *   int x = (y / 2 + 1);                     // parens around assignment rhs
+ *   for (int i = (0); i &lt; 10; i++) {      // parens around literal
+ *   t -= (z + 1);                            // parens around assignment rhs
+ *       </pre>
+ *       
+ *       <pre>      
+ *   int f1() {
+ *       int x = 0;
+ *       for (int i = (0+1); ((i) &lt; (6+6)); i += (1+0)) { // violation, parens around literal
+ *           x += (i + 100);                                 // violation, parens around assignment rhs
+ *           (x) += (i + 100/&#42;&#42;comment test&#42;/);  // violation, parens around assignment  
+ *           x = (x + i + 100);                              // violation, parens around assignment rhs
+ *           (x) = (x + i + 100);                            // violation, parens around assignment  
+ *       }
+ *       for (int i = (0+1); (i) &lt; ((6+6)); i += (1+0)) { // violation, parens around literal
+ *           System.identityHashCode("hi");
+ *       }       
+ *       return (0);                                         // violation, parens around identifier
+ *   }   
+ *       </pre>
+ *       <pre>
+ *   private int f2(int arg1, double arg2) {
+ *       int x, a, b, c, d;
+ *       String e, f;
+ *       x = 0;
+ *       a = 0;
+ *       b = 0;
+ *       c = (a + b);         // violation, parens not required since 'a'and 'b' are of same datatype 
+ *       d = c - 1;
+ *       int i = (int) arg2;  // okay, it is type casting
+ *       i = ((int) arg2);    // violation, parens around assignment rhs
+ *       x += (i + 100 + arg1);            // violation, parens around assignment rhs
+ *       a = (a + b) * (c + d);            // okay, to follow the precedence
+ *       b = ((((a + b) * (c + d))));      // violation, parens around assignment rhs
+ *       c = (((a) &lt;= b)) ? 0 : 1;         // violation, parens around identifiers
+ *       d = (a) + (b) * (600) / (int) (12.5f) + (int) (arg2);  // violation, parens around identifier 'a'     
+ *       e = ("this") + ("that") + ("is" + "other"); // violation, parens around assignment rhs
+ *       f = ("this is a really, really long string that should be truncated."); // violation, parens around assignment rhs
+ *       return (x + a + b + d);
+ *   }
+ *       </pre>
+ *       
+ *       <pre>          
+ *   private boolean f3() {
+ *       int x = f2((1), (13.5)); // violation, parens around literals
+ *       boolean b = (true);   // violation, parens around assignment rhs
+ *       return (b);           // violation, parens around identifier
+ *   }
+ *       </pre>
+ *       <pre>
+ *   public static int f4(int z, int a) {
+ *       int r = (z * a);                    // violation, parens around assignment rhs
+ *       r = (a &gt; z) ? a : z;             // violation, parens around expression
+ *       r = ((a &gt; z) ? a : z);           // violation, parens around assignment rhs and expression
+ *       r = (a &gt; z) ? a : (z + z);       // violation, parens around expression
+ *       return (r * r - 1);
+ *   }
+ *       </pre>
+ *       
+ *       <pre>
+ *   public void f5() {
+ *       int x, y;
+ *       x = 0;
+ *       y = 0;
+ *       if (x == y) {
+ *           print(x);
+ *        }
+ *       if ((x &gt; y)) { // violation, parens around condition expression
+ *           print(y);
+ *       }
+ *       while ((x &lt; 10)) { // violation, parens around condition expression
+ *           print(x++);
+ *       }
+ *       do {
+ *           print((y+=100)); // violation, parens around expression
+ *       } while (y &lt; (4000)); // violation, parens around condition expression
+ *   }
+ *       </pre>
+ *       <pre>
+ *   private void f6(TypeA a) {
+ *       TypeB b = (TypeB) a;
+ *       TypeC c = ((TypeC) a);  // violation, parens around assignment rhs
+ *       int r = 12345;
+ *       r &lt;&lt;= (3);              // violation, parens around literal
+ *       TypeParameterized&lt;String&gt; d = ((TypeParameterized&lt;String&gt;) a);  // violation, parens around assignment rhs
+ *   }
+ *       </pre>
+ *       <pre>
+ *   private int f7() {
+ *       String f;
+ *       f = ("12345678901234567890123"); // violation, parens around assignment rhs
+ *       return 0;
+ *   }     
+ * </pre>
  *
  * @since 3.4
  */
